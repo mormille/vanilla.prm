@@ -26,7 +26,7 @@ library("bnlearn")
 #At the end, this function will provide a table, with all the attributes of all classes
 #If an aggregation function is necessary, the mode will be used
 
-relational.schema <- function(keys, class1, class2, class3){
+relational.skeleton <- function(keys, class1, class2, class3){
   class1 = class1[complete.cases(class1), ]
   class2 = class2[complete.cases(class2), ]
   class3 = class3[complete.cases(class3), ]
@@ -130,6 +130,7 @@ relational.schema <- function(keys, class1, class2, class3){
   master_table = class1
   #class1 TO class2
   if(exists("class1_class2_link") == TRUE){
+    #1 TO 1 RELATION
     if((class1_class2_order == "1") && (class2_class1_order =="1")){
       cols.class2 = colnames(class2)
       for(x in cols.class2){
@@ -149,21 +150,18 @@ relational.schema <- function(keys, class1, class2, class3){
         }
       }
     }
+    #1 to N RELATIONS
     if((class1_class2_order == "1") && (class2_class1_order =="n")){
       cols.class2 = colnames(class2)
       for(x in cols.class2){
         if(is.element(x, keys) == FALSE){
           master_table[x] <- NA
-        }
-      }
-      unique.class1 = unique(class1[,class1_class2_link])
-      for(x in unique.class1){
-        partial = class2[which(class2[,class1_class2_link] == x), ]
-        cols.class2 = colnames(class2)
-        for(y in cols.class2){
-          if(is.element(y, keys) == FALSE){
-            f = names(sort(-table(partial[y])))[1]
-            master_table[y][which(class2[,class1_class2_link] == x), ] = f
+          for (i in 1:nrow(master_table)) {
+            partial = class2[which(class2[,class1_class2_link] == master_table[i, class1_class2_link]),]
+            f = names(sort(-table(partial[x])))[1]
+            if(is.null(f) == TRUE) next # skip and go to next iteration
+            cat(f)
+            master_table[i, x] = f
           }
         }
       }
@@ -190,6 +188,8 @@ relational.schema <- function(keys, class1, class2, class3){
           for (i in 1:nrow(master_table)) {
             partial = class2[which(class2[,class1_class2_link] == master_table[i, class1_class2_link]),]
             f = names(sort(-table(partial[x])))[1]
+            if(is.null(f) == TRUE) next # skip and go to next iteration
+            cat(f)
             master_table[i, x] = f
           }
         }
@@ -222,16 +222,12 @@ relational.schema <- function(keys, class1, class2, class3){
       for(x in cols.class3){
         if(is.element(x, keys) == FALSE){
           master_table[x] <- NA
-        }
-      }
-      unique.class1 = unique(class1[,class1_class3_link])
-      for(x in unique.class1){
-        partial = class3[which(class3[,class1_class3_link] == x), ]
-        cols.class3 = colnames(class3)
-        for(y in cols.class3){
-          if(is.element(y, keys) == FALSE){
-            f = names(sort(-table(partial[y])))[1]
-            master_table[y][which(class3[,class1_class3_link] == x), ] = f
+          for (i in 1:nrow(master_table)) {
+            partial = class3[which(class3[,class1_class3_link] == master_table[i, class1_class3_link]),]
+            f = names(sort(-table(partial[x])))[1]
+            if(is.null(f) == TRUE) next # skip and go to next iteration
+            cat(f)
+            master_table[i, x] = f
           }
         }
       }
@@ -258,6 +254,8 @@ relational.schema <- function(keys, class1, class2, class3){
           for (i in 1:nrow(master_table)) {
             partial = class3[which(class3[,class1_class3_link] == master_table[i, class1_class3_link]),]
             f = names(sort(-table(partial[x])))[1]
+            if(is.null(f) == TRUE) next # skip and go to next iteration
+            cat(f)
             master_table[i, x] = f
           }
         }
@@ -296,16 +294,12 @@ relational.schema <- function(keys, class1, class2, class3){
       for(x in cols.class3){
         if(is.element(x, keys) == FALSE){
           master_table[x] <- NA
-        }
-      }
-      unique.class2 = unique(class2[,class2_class3_link])
-      for(x in unique.class2){
-        partial = class3[which(class3[,class2_class3_link] == x), ]
-        cols.class3 = colnames(class3)
-        for(y in cols.class3){
-          if(is.element(y, keys) == FALSE){
-            f = names(sort(-table(partial[y])))[1]
-            master_table[y][which(class3[,class2_class3_link] == x), ] = f
+          for (i in 1:nrow(master_table)) {
+            partial = class3[which(class3[,class2_class3_link] == master_table[i, class2_class3_link]),]
+            f = names(sort(-table(partial[x])))[1]
+            if(is.null(f) == TRUE) next # skip and go to next iteration
+            cat(f)
+            master_table[i, x] = f
           }
         }
       }
@@ -332,6 +326,8 @@ relational.schema <- function(keys, class1, class2, class3){
           for (i in 1:nrow(master_table)) {
             partial = class3[which(class3[,class2_class3_link] == master_table[i, class2_class3_link]),]
             f = names(sort(-table(partial[x])))[1]
+            if(is.null(f) == TRUE) next # skip and go to next iteration
+            cat(f)
             master_table[i, x] = f
           }
         }

@@ -26,7 +26,7 @@ library("bnlearn")
 #At the end, this function will provide a table, with all the attributes of all classes
 #If an aggregation function is necessary, the mode will be used
 
-relational.skeleton <- function(keys, class1, class2, class3){
+relational.schema <- function(keys, class1, class2, class3){
   class1 = class1[complete.cases(class1), ]
   class2 = class2[complete.cases(class2), ]
   class3 = class3[complete.cases(class3), ]
@@ -160,7 +160,6 @@ relational.skeleton <- function(keys, class1, class2, class3){
             partial = class2[which(class2[,class1_class2_link] == master_table[i, class1_class2_link]),]
             f = names(sort(-table(partial[x])))[1]
             if(is.null(f) == TRUE) next # skip and go to next iteration
-            cat(f)
             master_table[i, x] = f
           }
         }
@@ -174,8 +173,7 @@ relational.skeleton <- function(keys, class1, class2, class3){
           master_table[x] <- NA
           for (i in 1:nrow(master_table)) {
             partial = class2[which(class2[,class1_class2_link] == master_table[i, class1_class2_link]),]
-            if(is.null(partial) == TRUE) next # skip and go to next iteration
-            cat(partial)
+            if(nrow(partial) == 0) next # skip and go to next iteration
             master_table[i, x] = as.character(partial[,x])
           }
         }
@@ -191,7 +189,6 @@ relational.skeleton <- function(keys, class1, class2, class3){
             partial = class2[which(class2[,class1_class2_link] == master_table[i, class1_class2_link]),]
             f = names(sort(-table(partial[x])))[1]
             if(is.null(f) == TRUE) next # skip and go to next iteration
-            cat(f)
             master_table[i, x] = f
           }
         }
@@ -228,7 +225,6 @@ relational.skeleton <- function(keys, class1, class2, class3){
             partial = class3[which(class3[,class1_class3_link] == master_table[i, class1_class3_link]),]
             f = names(sort(-table(partial[x])))[1]
             if(is.null(f) == TRUE) next # skip and go to next iteration
-            cat(f)
             master_table[i, x] = f
           }
         }
@@ -242,8 +238,7 @@ relational.skeleton <- function(keys, class1, class2, class3){
           master_table[x] <- NA
           for (i in 1:nrow(master_table)) {
             partial = class3[which(class3[,class1_class3_link] == master_table[i, class1_class3_link]),]
-            if(is.null(partial) == TRUE) next # skip and go to next iteration
-            cat(partial)
+            if(nrow(partial) == 0) next # skip and go to next iteration
             master_table[i, x] = as.character(partial[,x])
           }
         }
@@ -259,7 +254,6 @@ relational.skeleton <- function(keys, class1, class2, class3){
             partial = class3[which(class3[,class1_class3_link] == master_table[i, class1_class3_link]),]
             f = names(sort(-table(partial[x])))[1]
             if(is.null(f) == TRUE) next # skip and go to next iteration
-            cat(f)
             master_table[i, x] = f
           }
         }
@@ -272,6 +266,7 @@ relational.skeleton <- function(keys, class1, class2, class3){
     for (i in 1:nrow(master_table)) {
       key_gen = class2[which(class2[,class1_class2_link] == master_table[i, class1_class2_link]),]
       k = names(sort(-table(key_gen[class2_class3_link])))[1]
+      if(is.null(k) == TRUE) next # skip and go to next iteration
       master_table[i, class2_class3_link] = k
     }
     if((class2_class3_order == "1") && (class3_class2_order =="1")){
@@ -303,7 +298,6 @@ relational.skeleton <- function(keys, class1, class2, class3){
             partial = class3[which(class3[,class2_class3_link] == master_table[i, class2_class3_link]),]
             f = names(sort(-table(partial[x])))[1]
             if(is.null(f) == TRUE) next # skip and go to next iteration
-            cat(f)
             master_table[i, x] = f
           }
         }
@@ -317,8 +311,7 @@ relational.skeleton <- function(keys, class1, class2, class3){
           master_table[x] <- NA
           for (i in 1:nrow(master_table)) {
             partial = class3[which(class3[,class2_class3_link] == master_table[i, class2_class3_link]),]
-            if(is.null(partial) == TRUE) next # skip and go to next iteration
-            cat(partial)
+            if(nrow(partial) == 0) next # skip and go to next iteration
             master_table[i, x] = as.character(partial[,x])
           }
         }
@@ -334,7 +327,6 @@ relational.skeleton <- function(keys, class1, class2, class3){
             partial = class3[which(class3[,class2_class3_link] == master_table[i, class2_class3_link]),]
             f = names(sort(-table(partial[x])))[1]
             if(is.null(f) == TRUE) next # skip and go to next iteration
-            cat(f)
             master_table[i, x] = f
           }
         }

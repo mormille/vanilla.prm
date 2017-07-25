@@ -127,6 +127,7 @@ relational.schema <- function(keys, class1, class2, class3){
       }
     }
   }
+
   master_table = class1
   #class1 TO class2
   if(exists("class1_class2_link") == TRUE){
@@ -336,13 +337,68 @@ relational.schema <- function(keys, class1, class2, class3){
   drops <- keys
   master_table = master_table[ , !(names(master_table) %in% drops)]
   for(n in names(master_table)){
-    master_table[, n] <- as.factor(master_table[, n])
+  master_table[, n] <- as.factor(master_table[, n])
   }
   return(master_table)
 }
 
-structure.learn <- function(relational.schema){
-  pdag = hc(relational.schema)
+structure.learn <- function(relational_schema, keys, class1, class2, class3){
+  relational_schema = relational_schema[complete.cases(relational_schema), ]
+  colsclass1 <- c()
+  colsclass2 <- c()
+  colsclass3 <- c()
+  if(!is.null(class1)){
+    colsclass1 <- colnames(class1)
+  }
+  if(!is.null(class2)){
+    colsclass2 <- colnames(class2)
+  }
+  if(!is.null(class1)){
+    colsclass3 <- colnames(class3)
+  }
+  black_list <- c()
+  for(i in colsclass2){
+    if(is.element(i, keys) == FALSE){
+      for(j in colsclass1){
+        if(is.element(j, keys) == FALSE){
+          black_list[[length(black_list)+1]] <- j
+          black_list[[length(black_list)+1]] <- i
+        }
+      }
+    }
+  }
+  for(i in colsclass3){
+    if(is.element(i, keys) == FALSE){
+      for(j in colsclass1){
+        if(is.element(j, keys) == FALSE){
+          black_list[[length(black_list)+1]] <- j
+          black_list[[length(black_list)+1]] <- i
+        }
+      }
+    }
+  }
+  for(i in colsclass2){
+    if(is.element(i, keys) == FALSE){
+      for(j in colsclass3){
+        if(is.element(j, keys) == FALSE){
+          black_list[[length(black_list)+1]] <- j
+          black_list[[length(black_list)+1]] <- i
+        }
+      }
+    }
+  }
+  for(i in colsclass3){
+    if(is.element(i, keys) == FALSE){
+      for(j in colsclass2){
+        if(is.element(j, keys) == FALSE){
+          black_list[[length(black_list)+1]] <- j
+          black_list[[length(black_list)+1]] <- i
+        }
+      }
+    }
+  }
+  bl = matrix(black_list, ncol = 2, byrow = TRUE)
+  pdag = hc(relational_schema, blacklist = bl)
   plot(pdag)
   return(pdag)
 }

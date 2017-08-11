@@ -337,7 +337,7 @@ relational.schema <- function(keys, class1, class2, class3){
   drops <- keys
   master_table = master_table[ , !(names(master_table) %in% drops)]
   for(n in names(master_table)){
-  master_table[, n] <- as.factor(master_table[, n])
+    master_table[, n] <- as.factor(master_table[, n])
   }
   return(master_table)
 }

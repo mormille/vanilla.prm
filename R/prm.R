@@ -439,6 +439,7 @@ structure.learn <- function(relational_schema, keys, class1, class2, class3, sea
 }
 
 parameters.learn <- function(net, database){
+  database = database[complete.cases(database), ]
   fit = bn.fit(net, database)
   return(fit)
 }

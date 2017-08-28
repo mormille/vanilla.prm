@@ -1,0 +1,30 @@
+    The first step to create a PRM in R is to import your data.
+    On this first version csv format is recomended.
+    If you wish to import you data in some other format, please, search for the corret means to do it.
+    Import one table for each class in you domain (up to three classes).
+    It is very important that all foreing keys have the same identification on all tables on which they appears.
+    The first step, is to create a vector with all the key names, as the code bellow:
+    R> keys <- c("key1", "key2", "key3")
+    The function relational.schema() takes four arguments (Keys, class1, class2, class3), 
+    where "keys" is the vector with all the key names, and class1 (which is the main class), class2 and class3 are the data tables.
+    relational.schema() provides the relations between the classes in the schema, and perform all required aggregations.
+    It returns the master table for our domain. 
+    The function structure.learn() takes 7 arguments, the master table returned from the relational.schema, 
+    the "keys" vector, the three data tables, the search method for Bayesian networks structure learning (search_method), 
+    and the scoring function (score_function). 
+    The search method and scoring funciton are bnlearn features.
+    structure.learn() returns a direct acyclic graph (DAG).
+    search_method = 'hc' is set as default (Hill Climbing) 
+    'hc' ---> Hill Climbing
+    'tabu' ---> Tabu search.
+    score_function = 'bic' is set as default (Bayesian information criterion)
+    'loglik'---> the multinomial log-likelihood;
+    'aic' ---> the Akaike Information Criterion (AIC);
+    'bic' ---> the Bayesian Information Criterion (BIC);
+    'bde' ---> a score equivalent Dirichlet posterior density (BDe);
+    'bds' ---> a sparse Dirichlet posterior density (BDs);
+    'bdj' ---> a Dirichlet posterior density based on Jeffrey's prior (BDJ);
+    'bdla' ---> the locally averaged BDe score (BDla);
+    'k2' ---> the K2 score;
+    The function parameter.learn() takes 2 arguments, the DAG and the master_table.
+    It fits the parameters for the the learned structure using the data in the master table. 

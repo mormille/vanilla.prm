@@ -24,7 +24,7 @@ library("bnlearn")
 #The first class (denoted class1), will be the center of your PRModel,
 #and all the other classes will be aggregated towards "class1"
 #At the end, this function will provide a table, with all the attributes of all classes
-#If an aggregation function is necessary, the mode will be used
+#If an aggregation function is necessary, the mode will be used.
 
 relational.schema <- function(keys, class1, class2, class3){
   if(missing(class1)){

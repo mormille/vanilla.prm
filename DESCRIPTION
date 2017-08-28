@@ -3,9 +3,9 @@ Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
 Author: Luiz H. Mormille
-Maintainer: The package maintainer <luiz.mormille@usp.br>
+Maintainer: Luiz, Mormille <luiz.mormille@usp.br>
 Description: 
-    This is a package for quickly assembling a PRM with up to three classes with categorical attributesand.
+    This is a package for quickly assembling a PRM with up to three classes with categorical attributes.
     The PRM can be used to perform inference using information of different classes in the same domain.
     On this first version, the framework is limited to particular cases.
     However, it is going to be continuously improved by the author.

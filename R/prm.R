@@ -27,6 +27,30 @@ library("bnlearn")
 #If an aggregation function is necessary, the mode will be used
 
 relational.schema <- function(keys, class1, class2, class3){
+  if(missing(class1)){
+    class1 <- data.frame(Doubles=double(),
+                         Ints=integer(),
+                         Factors=factor(),
+                         Logicals=logical(),
+                         Characters=character(),
+                         stringsAsFactors=FALSE)
+  }
+  if(missing(class2)){
+    class2 <- data.frame(Doubles=double(),
+                         Ints=integer(),
+                         Factors=factor(),
+                         Logicals=logical(),
+                         Characters=character(),
+                         stringsAsFactors=FALSE)
+  }
+  if(missing(class3)){
+    class3 <- data.frame(Doubles=double(),
+                         Ints=integer(),
+                         Factors=factor(),
+                         Logicals=logical(),
+                         Characters=character(),
+                         stringsAsFactors=FALSE)
+  }
   class1 = class1[complete.cases(class1), ]
   class2 = class2[complete.cases(class2), ]
   class3 = class3[complete.cases(class3), ]
@@ -342,7 +366,13 @@ relational.schema <- function(keys, class1, class2, class3){
   return(master_table)
 }
 
-structure.learn <- function(relational_schema, keys, class1, class2, class3){
+structure.learn <- function(relational_schema, keys, class1, class2, class3, search_method, score_function){
+  if(missing(search_method)){
+    search_method <- 'hc'
+  }
+  if(missing(score_function)){
+    score_function <- 'bic'
+  }
   relational_schema = relational_schema[complete.cases(relational_schema), ]
   colsclass1 <- c()
   colsclass2 <- c()
@@ -398,7 +428,12 @@ structure.learn <- function(relational_schema, keys, class1, class2, class3){
     }
   }
   bl = matrix(black_list, ncol = 2, byrow = TRUE)
-  pdag = hc(relational_schema, blacklist = bl)
+  if(search_method == 'hc'){
+    pdag = hc(relational_schema, blacklist = bl, score = score_function)
+  }
+  if(search_method == 'tabu'){
+    pdag = tabu(relational_schema, blacklist = bl, score = score_function)
+  }
   plot(pdag)
   return(pdag)
 }
@@ -407,8 +442,3 @@ parameters.learn <- function(net, database){
   fit = bn.fit(net, database)
   return(fit)
 }
-
-
-
-
-

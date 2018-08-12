@@ -1,4 +1,4 @@
-structure.learn <- function(mt_mainclass, mt_class2, mt_class3, mt_class4, mt_class5, mt_class6, keys, class1, class2, class3, class4, class5, class6, search_method, score_function){
+structure.learn <- function(mt_mainclass, mt_class2, mt_class3, keys, class1, class2, class3, search_method, score_function){
   #If a search method is not specified, hill-climbing will be set as default
   if(missing(search_method)){
     search_method <- 'hc'

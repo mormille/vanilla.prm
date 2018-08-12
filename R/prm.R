@@ -26,7 +26,8 @@ library("bnlearn")
 #At the end, this function will provide a table, with all the attributes of all classes
 #If an aggregation function is necessary, the mode will be used.
 
-relational.schema <- function(keys, class1, class2, class3){
+
+master.table <- function(keys, class1, class2, class3){
   if(missing(class1)){
     class1 <- data.frame(Doubles=double(),
                          Ints=integer(),
@@ -366,80 +367,12 @@ relational.schema <- function(keys, class1, class2, class3){
   return(master_table)
 }
 
-structure.learn <- function(relational_schema, keys, class1, class2, class3, search_method, score_function){
-  if(missing(search_method)){
-    search_method <- 'hc'
-  }
-  if(missing(score_function)){
-    score_function <- 'bic'
-  }
-  relational_schema = relational_schema[complete.cases(relational_schema), ]
-  colsclass1 <- c()
-  colsclass2 <- c()
-  colsclass3 <- c()
-  if(!is.null(class1)){
-    colsclass1 <- colnames(class1)
-  }
-  if(!is.null(class2)){
-    colsclass2 <- colnames(class2)
-  }
-  if(!is.null(class1)){
-    colsclass3 <- colnames(class3)
-  }
-  black_list <- c()
-  for(i in colsclass2){
-    if(is.element(i, keys) == FALSE){
-      for(j in colsclass1){
-        if(is.element(j, keys) == FALSE){
-          black_list[[length(black_list)+1]] <- j
-          black_list[[length(black_list)+1]] <- i
-        }
-      }
-    }
-  }
-  for(i in colsclass3){
-    if(is.element(i, keys) == FALSE){
-      for(j in colsclass1){
-        if(is.element(j, keys) == FALSE){
-          black_list[[length(black_list)+1]] <- j
-          black_list[[length(black_list)+1]] <- i
-        }
-      }
-    }
-  }
-  for(i in colsclass2){
-    if(is.element(i, keys) == FALSE){
-      for(j in colsclass3){
-        if(is.element(j, keys) == FALSE){
-          black_list[[length(black_list)+1]] <- j
-          black_list[[length(black_list)+1]] <- i
-        }
-      }
-    }
-  }
-  for(i in colsclass3){
-    if(is.element(i, keys) == FALSE){
-      for(j in colsclass2){
-        if(is.element(j, keys) == FALSE){
-          black_list[[length(black_list)+1]] <- j
-          black_list[[length(black_list)+1]] <- i
-        }
-      }
-    }
-  }
-  bl = matrix(black_list, ncol = 2, byrow = TRUE)
-  if(search_method == 'hc'){
-    pdag = hc(relational_schema, blacklist = bl, score = score_function)
-  }
-  if(search_method == 'tabu'){
-    pdag = tabu(relational_schema, blacklist = bl, score = score_function)
-  }
-  plot(pdag)
-  return(pdag)
+
+relational.schema <- function(keys, class1, class2, class3){
+  mt_leafclass <- master.table(keys, class1, class2, class3)
+  mt_class2 <- master.table(keys, class2, class1, class3)
+  mt_class3 <- master.table(keys, class3, class1, class2)
+  master_tables <- list("Mt(lc)" = mt_leafclass, "Mt(c2)" = mt_class2, "Mt(c3)" = mt_class3)
+  return(master_tables)
 }
 
-parameters.learn <- function(net, database){
-  database = database[complete.cases(database), ]
-  fit = bn.fit(net, database)
-  return(fit)
-}

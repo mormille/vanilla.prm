@@ -1,33 +1,42 @@
-parameters.learn <- function(net, mt_mainclass, mt_class2, mt_class3){
-  #Only the complete cases of the master_table for the main class will be considered
-  #Variables with only one observed level will gain a "Ghost" level, that way the search method can be applied 
-  mt_mainclass = mt_mainclass[complete.cases(mt_mainclass), ]
-  cols_mt_mainclass <- colnames(mt_mainclass)
-  for (i in cols_mt_mainclass){
-    if(length(levels(mt_mainclass[,i])) == 1){
-      levels(mt_mainclass[,i]) <- c(levels(mt_mainclass[,i]), "Ghost")
+#' Parameter Learning for PRM
+#'
+#' Fits conditional probability distributions to the learned PRM structure.
+#'
+#' @param net The PRM structure (bn object) from structure.learn
+#' @param mt_mainclass Master table for the main class
+#' @param mt_class2 Master table for class 2 (optional, for advanced use)
+#' @param mt_class3 Master table for class 3 (optional, for advanced use)
+#'
+#' @return A bn.fit object with fitted parameters
+#' @export
+#' @importFrom bnlearn bn.fit
+parameters.learn <- function(net, mt_mainclass, mt_class2 = NULL, mt_class3 = NULL) {
+  
+  # Helper function to prepare master table
+  prepare_master_table <- function(mt) {
+    if (is.null(mt) || nrow(mt) == 0) return(NULL)
+    
+    mt <- mt[complete.cases(mt), , drop = FALSE]
+    
+    # Add "Ghost" level to single-level factors
+    for (col in colnames(mt)) {
+      if (is.factor(mt[[col]]) && length(levels(mt[[col]])) == 1) {
+        levels(mt[[col]]) <- c(levels(mt[[col]]), "Ghost")
+      }
     }
+    return(mt)
   }
-  #Only the complete cases of the master_table for class 2 will be considered
-  #Variables with only one observed level will gain a "Ghost" level, that way the search method can be applied 
-  mt_class2 = mt_class2[complete.cases(mt_class2), ]
-  cols_mt_class2 <- colnames(mt_class2)
-  for (i in cols_mt_class2){
-    if(length(levels(mt_class2[,i])) == 1){
-      levels(mt_class2[,i]) <- c(levels(mt_class2[,i]), "Ghost")
-    }
+  
+  # Prepare main class master table
+  mt_mainclass <- prepare_master_table(mt_mainclass)
+  
+  if (is.null(mt_mainclass) || nrow(mt_mainclass) == 0) {
+    stop("mt_mainclass is empty or NULL after preprocessing")
   }
-  #Only the complete cases of the master_table for class 3 will be considered
-  #Variables with only one observed level will gain a "Ghost" level, that way the search method can be applied 
-  mt_class3 = mt_class3[complete.cases(mt_class3), ]
-  cols_mt_class3 <- colnames(mt_class3)
-  for (i in cols_mt_class3){
-    if(length(levels(mt_class3[,i])) == 1){
-      levels(mt_class3[,i]) <- c(levels(mt_class3[,i]), "Ghost")
-    }
-  }
-  fit_mainclass = bn.fit(net, mt_mainclass)
-  fit_class2 = bn.fit(net, mt_class2)
-  fit_class3 = bn.fit(net, mt_class3)
+  
+  # Fit parameters using the main class master table
+  # Note: The original code also prepared mt_class2 and mt_class3 but only used mt_mainclass
+  fit_mainclass <- bnlearn::bn.fit(net, mt_mainclass)
+  
   return(fit_mainclass)
 }
